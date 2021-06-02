@@ -16,23 +16,30 @@ syms gamma_Body_Pre(t)
 syms x_Head_Pre(t) y_Head_Pre(t) z_Head_Pre(t)
 
 %%
-syms offset_Body doffset_Body ddoffset_Body real
+
 syms alpha_Body dalpha_Body ddalpha_Body real
 syms beta_Body dbeta_Body ddbeta_Body real
 syms gamma_Body dgamma_Body ddgamma_Body real
+syms x_Head dx_Head ddx_Head real
+syms y_Head dy_Head ddy_Head real
+syms z_Head dz_Head ddz_Head real
 
 syms_Replaced = [
-    offset_Body_Pre diff(offset_Body_Pre, t) diff(offset_Body_Pre, t, t), ...
     alpha_Body_Pre diff(alpha_Body_Pre, t) diff(alpha_Body_Pre, t, t), ...
     beta_Body_Pre diff(beta_Body_Pre, t) diff(beta_Body_Pre, t, t), ...
     gamma_Body_Pre diff(gamma_Body_Pre, t) diff(gamma_Body_Pre, t, t), ...
+    x_Head_Pre diff(x_Head_Pre, t) diff(x_Head_Pre, t, t), ...
+    y_Head_Pre diff(y_Head_Pre, t) diff(y_Head_Pre, t, t), ...
+    z_Head_Pre diff(z_Head_Pre, t) diff(z_Head_Pre, t, t), ...
     ];
 
 syms_Replacing = [
-    offset_Body doffset_Body ddoffset_Body...
     alpha_Body dalpha_Body ddalpha_Body ...
     beta_Body dbeta_Body ddbeta_Body ...
     gamma_Body dgamma_Body ddgamma_Body ...
+    x_Head dx_Head ddx_Head ...
+    y_Head dy_Head ddy_Head ...
+    z_Head dz_Head ddz_Head ...
     ];
 
 %%
@@ -57,7 +64,7 @@ trans_Vec_Body = ...
     * ...
     [1, 0, 0, 0; 0, cos(alpha_Body_Pre), -sin(alpha_Body_Pre), 0; 0, sin(alpha_Body_Pre), cos(alpha_Body_Pre), 0; 0, 0, 0, 1]' ...
     * ...
-    [1, 0, 0, 0; 0, 1, 0, offset_Body_Pre; 0, 0, 1, 0; 0, 0, 0, 1]' ...
+    [1, 0, 0, x_Head_Pre; 0, 1, 0, y_Head_Pre; 0, 0, 1, z_Head_Pre; 0, 0, 0, 1]' ...
     * ...
     1;
 
@@ -96,17 +103,19 @@ L = T - U;
 
 %%
 equations = [
-    -functionalDerivative(L, offset_Body_Pre) == 0 + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, offset_Body_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, offset_Body_Pre)');
     -functionalDerivative(L, alpha_Body_Pre) == 0 + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, alpha_Body_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, alpha_Body_Pre)');
     -functionalDerivative(L, beta_Body_Pre) == 0 + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, beta_Body_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, beta_Body_Pre)');
     -functionalDerivative(L, gamma_Body_Pre) == 0 + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, gamma_Body_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, gamma_Body_Pre)');
+    -functionalDerivative(L, x_Head_Pre) == 0 + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, x_Head_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, x_Head_Pre)');
+    -functionalDerivative(L, y_Head_Pre) == 0 + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, y_Head_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, y_Head_Pre)');
+    -functionalDerivative(L, z_Head_Pre) == 0 + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, z_Head_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, z_Head_Pre)');
     ];
 
 %%
 
 equations = subs(equations, syms_Replaced, syms_Replacing);
 
-variables = [ddoffset_Body, ddalpha_Body, ddbeta_Body, ddgamma_Body];
+variables = [ddalpha_Body, ddbeta_Body, ddgamma_Body, ddx_Head, ddy_Head, ddz_Head];
 
 [A, B] = equationsToMatrix(equations, variables);
 toc
@@ -116,13 +125,13 @@ toc
 
 parallel.defaultClusterProfile('local');
 c = parcluster();
-% 
-% job = createJob(c);
-% createTask(job, @matlabFunction, 1,{X(1), X(2), X(3), X(4), ...
-%     'file', 'find_Dds_Body.m', 'outputs', ...
-%     {'ddoffset_Body', 'ddalpha_Body', 'ddbeta_Body', 'ddgamma_Body'}});
-% submit(job)
-% job.Tasks
+
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{X(1), X(2), X(3), X(4), X(5), X(6), ...
+    'file', 'find_Dds_Body.m', 'outputs', ...
+    {'ddalpha_Body', 'ddbeta_Body', 'ddgamma_Body', 'ddx_Head', 'ddy_Head', 'ddz_Head'}});
+submit(job)
+job.Tasks
 
 %%
 
@@ -145,12 +154,12 @@ ddr_Shoulder = subs(ddr_Shoulder, variables, X');
 
 size(coeffs_Ddr_Shoulde)
 
-% job = createJob(c);
-% createTask(job, @matlabFunction, 1,{coeffs_Ddr_Shoulde, ...
-%     'file', 'find_Coeffs_Ddr_Shoulder.m', 'outputs', ...
-%     {'coeffs_Ddr_Shoulder'}});
-% submit(job)
-% job.Tasks
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{coeffs_Ddr_Shoulde, ...
+    'file', 'find_Coeffs_Ddr_Shoulder.m', 'outputs', ...
+    {'coeffs_Ddr_Shoulder'}});
+submit(job)
+job.Tasks
 
 ddl_Shoulder = diff(l_Shoulder, t, t);
 ddl_Shoulder = subs(ddl_Shoulder, syms_Replaced, syms_Replacing);
@@ -164,26 +173,26 @@ ddl_Shoulder = subs(ddl_Shoulder, variables, X');
 
 size(coeffs_Ddl_Shoulde)
 
-% job = createJob(c);
-% createTask(job, @matlabFunction, 1,{coeffs_Ddl_Shoulde, ...
-%     'file', 'find_Coeffs_Ddl_Shoulder.m', 'outputs', ...
-%     {'coeffs_Ddl_Shoulder'}});
-% submit(job)
-% job.Tasks
-% 
-% job = createJob(c);
-% createTask(job, @matlabFunction, 1,{ddr_Shoulder, ...
-%     'file', 'find_Ddr_Shoulder.m', 'outputs', ...
-%     {'ddr_Shoulder'}});
-% submit(job)
-% job.Tasks
-% 
-% job = createJob(c);
-% createTask(job, @matlabFunction, 1,{ddl_Shoulder, ...
-%     'file', 'find_Ddl_Shoulder.m', 'outputs', ...
-%     {'ddl_Shoulder'}});
-% submit(job)
-% job.Tasks
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{coeffs_Ddl_Shoulde, ...
+    'file', 'find_Coeffs_Ddl_Shoulder.m', 'outputs', ...
+    {'coeffs_Ddl_Shoulder'}});
+submit(job)
+job.Tasks
+
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{ddr_Shoulder, ...
+    'file', 'find_Ddr_Shoulder.m', 'outputs', ...
+    {'ddr_Shoulder'}});
+submit(job)
+job.Tasks
+
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{ddl_Shoulder, ...
+    'file', 'find_Ddl_Shoulder.m', 'outputs', ...
+    {'ddl_Shoulder'}});
+submit(job)
+job.Tasks
 
 %%
 r_Shoulder = subs(r_Shoulder, syms_Replaced, syms_Replacing);

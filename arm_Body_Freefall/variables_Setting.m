@@ -12,12 +12,14 @@ g = 1;
 alpha_Body = deg2rad(0);
 beta_Body = deg2rad(0);
 gamma_Body = deg2rad(0);
-offset_Body = 1;
+x_Head = 0;
+y_Head = 1;
+z_Head = 0;
 
-r_Alpha_Hand = -deg2rad(90);
+r_Alpha_Hand = -deg2rad(0);
 r_Beta_Hand = deg2rad(0);
 
-l_Alpha_Hand = -deg2rad(90);
+l_Alpha_Hand = -deg2rad(0);
 l_Beta_Hand = -deg2rad(0);
 
 tau_Alpha_Body = 0;
@@ -40,11 +42,11 @@ l_Z_Fixed = l_P_Fixed(3);
 r_Arm_Bottom = find_R_Arm_Bottom(length_Hand,r_Alpha_Hand,r_Beta_Hand,r_X_Fixed,r_Y_Fixed,r_Z_Fixed);
 l_Arm_Bottom = find_L_Arm_Bottom(l_Alpha_Hand,l_Beta_Hand,l_X_Fixed,l_Y_Fixed,l_Z_Fixed,length_Hand);
 
-l_Shoulder = find_L_Shoulder(alpha_Body,beta_Body,gamma_Body,offset_Body,width_Body);
-r_Shoulder = find_R_Shoulder(alpha_Body,beta_Body,gamma_Body,offset_Body,width_Body);
+r_Shoulder = find_R_Shoulder(alpha_Body,beta_Body,gamma_Body,width_Body,x_Head,y_Head,z_Head);
+l_Shoulder = find_L_Shoulder(alpha_Body,beta_Body,gamma_Body,width_Body,x_Head,y_Head,z_Head);
 
-l_Hip = find_L_Hip(alpha_Body,beta_Body,gamma_Body,height_Body,offset_Body,width_Body);
-r_Hip = find_R_Hip(alpha_Body,beta_Body,gamma_Body,height_Body,offset_Body,width_Body);
+r_Hip = find_R_Hip(alpha_Body,beta_Body,gamma_Body,height_Body,width_Body,x_Head,y_Head,z_Head);
+l_Hip = find_L_Hip(alpha_Body,beta_Body,gamma_Body,height_Body,width_Body,x_Head,y_Head,z_Head);
 
 %%
 r_P_Fixed = r_P_Fixed + (r_Shoulder - r_Arm_Bottom);
