@@ -26,10 +26,10 @@ dy2 = v1(2);
 
 f2_X = 0;
 f2_Y = 0;
-tau2 = 0.1;
+tau2 = 0;
 
 q = [th1, dth1, th2, dth2, x2, dx2, y2, dy2]';
-time = 0:1e-2:100;
+time = 0:1e-2:30;
 
 [time,q] = ode45(@(t,q) ddt_Double(t, q,g,l1,l2,m1,m2,tau2), time, q);
 
