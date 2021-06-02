@@ -1,0 +1,130 @@
+
+syms m1 m2 real
+syms g real
+syms l1 l2 real
+
+% syms f1_X f1_Y real
+syms f2_X f2_Y real
+syms tau2 real
+
+syms th1_Pre(t)
+syms x1_Pre(t)
+syms y1_Pre(t)
+syms th2_Pre(t)
+syms x2_Pre(t)
+syms y2_Pre(t)
+
+syms th1 dth1 ddth1 real
+syms x1 dx1 ddx1 real
+syms y1 dy1 ddy1 real
+syms th2 dth2 ddth2 real
+syms x2 dx2 ddx2 real
+syms y2 dy2 ddy2 real
+
+syms_Replaced = [
+    th1_Pre, diff(th1_Pre, t), diff(th1_Pre, t, t), ...
+    x1_Pre, diff(x1_Pre, t), diff(x1_Pre, t, t), ...
+    y1_Pre, diff(y1_Pre, t), diff(y1_Pre, t, t), ...
+    th2_Pre, diff(th2_Pre, t), diff(th2_Pre, t, t), ...
+    x2_Pre, diff(x2_Pre, t), diff(x2_Pre, t, t), ...
+    y2_Pre, diff(y2_Pre, t), diff(y2_Pre, t, t), ...
+    ];
+
+syms_Replacing = [
+    th1, dth1, ddth1, ...
+    x1, dx1, ddx1, ...
+    y1, dy1, ddy1, ...
+    th2, dth2, ddth2, ...
+    x2, dx2, ddx2, ...
+    y2, dy2, ddy2, ...
+    ];
+
+p1 = l1 * [cos(th1_Pre), sin(th1_Pre)];
+p2 = [x2_Pre, y2_Pre] + l2 * [cos(th2_Pre), sin(th2_Pre)];
+p1_G = 1/2 * [cos(th1_Pre), sin(th1_Pre)];
+p2_G = [x2_Pre, y2_Pre] + 1/2 * [cos(th2_Pre), sin(th2_Pre)];
+
+p1 = formula(p1);
+p2 = formula(p2);
+p1_G = formula(p1_G);
+p2_G = formula(p2_G);
+
+v1_G = diff(p1_G, t);
+v2_G = diff(p2_G, t);
+
+a1 = formula(diff(p1, t, t));
+
+T1 = 1/2 * m1 * (v1_G * v1_G') + 1/2 * (1/12 * m1 * l1^2) * diff(th1_Pre, t)^2;
+U1 = m1 * g * p1(2);
+L1 = T1 - U1;
+
+T2 = 1/2 * m2 * (v2_G * v2_G') + 1/2 * (1/12 * m2 * l2^2) * diff(th2_Pre, t)^2;
+U2 = m2 * g * p2(2);
+L2 = T2 - U2;
+
+equations1 = [
+    -functionalDerivative(L1, th1_Pre) == -tau2 + ([-f2_X, -f2_Y] * diff(p1', th1_Pre));
+    ];
+
+equations2 = [
+    -functionalDerivative(L2, x2_Pre) == f2_X;
+    -functionalDerivative(L2, y2_Pre) == f2_Y;
+    -functionalDerivative(L2, th2_Pre) == tau2;
+    ];
+
+equations1 = subs(equations1, syms_Replaced, syms_Replacing);
+equations2 = subs(equations2, syms_Replaced, syms_Replacing);
+a1 = subs(a1, syms_Replaced, syms_Replacing);
+
+variables1 = [ddth1];
+variables2 = [ddx2, ddy2, ddth2];
+
+[a, b] = equationsToMatrix(equations1, variables1);
+sol1 = inv(a) * b;
+
+[a, b] = equationsToMatrix(equations2, variables2);
+sol2 = inv(a) * b;
+
+a1 = subs(a1, variables1, sol1');
+
+matlabFunction(sol1(1), a1(1), a1(2), 'file', 'find_Dds1.m', 'outputs', {'ddth1', 'p1ddx', 'p1ddy'})
+matlabFunction(sol2(1), sol2(2), sol2(3), 'file', 'find_Dds2.m', 'outputs', {'ddx2', 'ddy2', 'ddth2'})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
