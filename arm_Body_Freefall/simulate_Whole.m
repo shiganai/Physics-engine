@@ -59,7 +59,7 @@ l_Z_Fixed = l_P_Fixed(3);
 
 %%
 
-time = 0:1e-2:13;
+time = 0:1e-2:100;
 q = [r_Alpha_Hand, 0, r_Beta_Hand, 0, l_Alpha_Hand, 0, l_Beta_Hand, 0, ...
     alpha_Body, 0, beta_Body, 0, gamma_Body, 0, ...
     x_Head, 0, y_Head, 0, z_Head, 0]';
@@ -80,12 +80,15 @@ dl_Beta_Hand = q(:, 8);
 
 alpha_Body = q(:, 9);
 dalpha_Body = q(:, 10);
+ddalpha_Body = fnval(fnder(spline(time, dalpha_Body)), time);
 
 beta_Body = q(:, 11);
 dbeta_Body = q(:, 12);
+ddbeta_Body = fnval(fnder(spline(time, dbeta_Body)), time);
 
 gamma_Body = q(:, 13);
 dgamma_Body = q(:, 14);
+ddgamma_Body = fnval(fnder(spline(time, dgamma_Body)), time);
 
 x_Head = q(:, 15);
 dx_Head = q(:, 16);
@@ -125,6 +128,12 @@ view(anime.axAnime, [-1,-1,-0])
 
 dockfig(1)
 plot(time, [alpha_Body, beta_Body, gamma_Body])
+
+dockfig(2)
+plot(time, [dbeta_Body, dgamma_Body])
+
+dockfig(3)
+plot(time, [ddbeta_Body, ddgamma_Body])
 
 
 

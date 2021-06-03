@@ -120,6 +120,29 @@ l_F_Z = f_All(6);
 % 
 % [ddr_Arm_Bottom - ddr_Shoulder, ddl_Arm_Bottom - ddl_Shoulder]
 
+dd_Threshold = 3;
+if abs(ddbeta_Body) < dd_Threshold
+    if (dbeta_Body == 0)
+        ddbeta_Body = 0;
+    end
+end
+if abs(ddgamma_Body) < dd_Threshold
+    if (dgamma_Body == 0)
+        ddgamma_Body = 0;
+    end
+end
+
+if abs(ddr_Beta_Hand) < dd_Threshold
+    if (dr_Beta_Hand == 0)
+        ddr_Beta_Hand = 0;
+    end
+end
+if abs(ddl_Beta_Hand) < dd_Threshold
+    if (dl_Beta_Hand == 0)
+        ddl_Beta_Hand = 0;
+    end
+end
+
 dotq = [dr_Alpha_Hand, ddr_Alpha_Hand, dr_Beta_Hand, ddr_Beta_Hand, dl_Alpha_Hand, ddl_Alpha_Hand, dl_Beta_Hand, ddl_Beta_Hand, ...
     dalpha_Body, ddalpha_Body, dbeta_Body, ddbeta_Body, dgamma_Body, ddgamma_Body, ...
     dx_Head, ddx_Head, dy_Head, ddy_Head, dz_Head, ddz_Head]';
