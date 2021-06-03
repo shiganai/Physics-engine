@@ -59,7 +59,7 @@ l_Z_Fixed = l_P_Fixed(3);
 
 %%
 
-time = 0:1e-2:30;
+time = 0:1e-2:13;
 q = [r_Alpha_Hand, 0, r_Beta_Hand, 0, l_Alpha_Hand, 0, l_Beta_Hand, 0, ...
     alpha_Body, 0, beta_Body, 0, gamma_Body, 0, ...
     x_Head, 0, y_Head, 0, z_Head, 0]';
@@ -122,6 +122,9 @@ xlim(anime.axAnime, plot_Lim)
 ylim(anime.axAnime, plot_Lim)
 zlim(anime.axAnime, plot_Lim)
 view(anime.axAnime, [-1,-1,-0])
+
+dockfig(1)
+plot(time, [alpha_Body, beta_Body, gamma_Body])
 
 
 
