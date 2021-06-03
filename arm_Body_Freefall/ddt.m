@@ -1,4 +1,4 @@
-function dotq = ddt(~,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body)
+function dotq = ddt(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body)
 
 r_X_Fixed = r_P_Fixed(1);
 r_Y_Fixed = r_P_Fixed(2);
@@ -29,14 +29,56 @@ dbeta_Body = q(12);
 gamma_Body = q(13);
 dgamma_Body = q(14);
 
-x_Head = q(15);
+% x_Head = q(15);
 dx_Head = q(16);
-
-y_Head = q(17);
+% 
+% y_Head = q(17);
 dy_Head = q(18);
-
-z_Head = q(19);
+% 
+% z_Head = q(19);
 dz_Head = q(20);
+
+dl_Arm_Bottom = find_Dl_Arm_Bottom(dl_Beta_Hand,dl_Alpha_Hand,l_Alpha_Hand,l_Beta_Hand,length_Hand);
+dr_Arm_Bottom = find_Dr_Arm_Bottom(dr_Beta_Hand,dr_Alpha_Hand,length_Hand,r_Alpha_Hand,r_Beta_Hand);
+
+dx_Head = (dl_Arm_Bottom(1) + dr_Arm_Bottom(1))/2;
+dy_Head = (dl_Arm_Bottom(2) + dr_Arm_Bottom(2))/2;
+dz_Head = (dl_Arm_Bottom(3) + dr_Arm_Bottom(3))/2;
+
+% [dbeta_Body_Tmp,dx_Head_Tmp,dy_Head_Tmp,dz_Head_Tmp] = find_Restrained_Velocity(alpha_Body,beta_Body,dalpha_Body,dgamma_Body,dl_Beta_Hand,dl_Alpha_Hand,dr_Beta_Hand,dr_Alpha_Hand,gamma_Body,l_Alpha_Hand,l_Beta_Hand,length_Hand,r_Alpha_Hand,r_Beta_Hand,width_Body);
+% if any(isnan([dbeta_Body_Tmp,dx_Head_Tmp,dy_Head_Tmp,dz_Head_Tmp]))
+%     1 + 1
+% elseif any(isinf([dbeta_Body_Tmp,dx_Head_Tmp,dy_Head_Tmp,dz_Head_Tmp]))
+%     1 + 1
+% else
+%     dbeta_Body = dbeta_Body_Tmp;
+%     dx_Head = dx_Head_Tmp;
+%     dy_Head = dy_Head_Tmp;
+%     dz_Head = dz_Head_Tmp;
+% end
+
+% [dbeta_Body_Tmp,dgamma_Body_Tmp,dx_Head_Tmp,dy_Head_Tmp,dz_Head_Tmp] = find_Restrained_Velocity(alpha_Body,beta_Body,dalpha_Body,dl_Beta_Hand,dl_Alpha_Hand,dr_Beta_Hand,dr_Alpha_Hand,gamma_Body,l_Alpha_Hand,l_Beta_Hand,length_Hand,r_Alpha_Hand,r_Beta_Hand,width_Body);
+% if any(isnan([dbeta_Body_Tmp,dgamma_Body_Tmp,dx_Head_Tmp,dy_Head_Tmp,dz_Head_Tmp]))
+% elseif any(isinf([dbeta_Body_Tmp,dgamma_Body_Tmp,dx_Head_Tmp,dy_Head_Tmp,dz_Head_Tmp]))
+% else
+%     dbeta_Body = dbeta_Body_Tmp;
+%     dgamma_Body = dgamma_Body_Tmp;
+%     dx_Head = dx_Head_Tmp;
+%     dy_Head = dy_Head_Tmp;
+%     dz_Head = dz_Head_Tmp;
+% end
+
+% [dalpha_Body_Tmp,dbeta_Body_Tmp,dgamma_Body_Tmp,dx_Head_Tmp,dy_Head_Tmp,dz_Head_Tmp] = find_Restrained_Velocity(alpha_Body,beta_Body,dl_Beta_Hand,dl_Alpha_Hand,dr_Beta_Hand,dr_Alpha_Hand,gamma_Body,l_Alpha_Hand,l_Beta_Hand,length_Hand,r_Alpha_Hand,r_Beta_Hand,width_Body);
+% if any(isnan([dalpha_Body_Tmp,dbeta_Body_Tmp,dgamma_Body_Tmp,dx_Head_Tmp,dy_Head_Tmp,dz_Head_Tmp]))
+% elseif any(isinf([dalpha_Body_Tmp,dbeta_Body_Tmp,dgamma_Body_Tmp,dx_Head_Tmp,dy_Head_Tmp,dz_Head_Tmp]))
+% else
+%     dalpha_Body = dalpha_Body_Tmp;
+%     dbeta_Body = dbeta_Body_Tmp;
+%     dgamma_Body = dgamma_Body_Tmp;
+%     dx_Head = dx_Head_Tmp;
+%     dy_Head = dy_Head_Tmp;
+%     dz_Head = dz_Head_Tmp;
+% end
 
 coeffs_Ddr_Arm_Bottom = find_Coeffs_Ddr_Arm_Bottom(dr_Beta_Hand,dr_Alpha_Hand,g,length_Hand,m_Hand,r_Alpha_Hand,r_Beta_Hand);
 coeffs_Ddr_Arm_Bottom = [coeffs_Ddr_Arm_Bottom(:, 1:3), zeros(3,3), coeffs_Ddr_Arm_Bottom(:, 4)];

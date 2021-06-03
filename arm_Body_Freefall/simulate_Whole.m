@@ -9,18 +9,18 @@ m_Hand = 1;
 length_Hand = 1;
 g = 1;
 
-alpha_Body = deg2rad(0);
+alpha_Body = deg2rad(10);
 beta_Body = deg2rad(0);
 gamma_Body = deg2rad(0);
 x_Head = 0;
 y_Head = 1;
 z_Head = 0;
 
-r_Alpha_Hand = -deg2rad(0);
+r_Alpha_Hand = deg2rad(0);
 r_Beta_Hand = deg2rad(0);
 
-l_Alpha_Hand = -deg2rad(0);
-l_Beta_Hand = -deg2rad(0);
+l_Alpha_Hand = deg2rad(0);
+l_Beta_Hand = deg2rad(0);
 
 tau_Alpha_Body = 0;
 r_Tau_Alpha_Hand = 10;
@@ -59,7 +59,7 @@ l_Z_Fixed = l_P_Fixed(3);
 
 %%
 
-time = 0:1e-2:100;
+time = 0:1e-2:30;
 q = [r_Alpha_Hand, 0, r_Beta_Hand, 0, l_Alpha_Hand, 0, l_Beta_Hand, 0, ...
     alpha_Body, 0, beta_Body, 0, gamma_Body, 0, ...
     x_Head, 0, y_Head, 0, z_Head, 0]';
@@ -121,7 +121,7 @@ plot_Lim = 4 * [-1, 1];
 xlim(anime.axAnime, plot_Lim)
 ylim(anime.axAnime, plot_Lim)
 zlim(anime.axAnime, plot_Lim)
-view(anime.axAnime, [-1,-1,-1])
+view(anime.axAnime, [-1,-1,-0])
 
 
 

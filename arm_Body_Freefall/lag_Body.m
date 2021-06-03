@@ -84,9 +84,6 @@ g_Body = g_Body(1:3);
 %%
 v_G_Body = diff(g_Body, t);
 
-ddr_Shoulder = diff(r_Shoulder, t, t);
-ddl_Shoulder = diff(l_Shoulder, t, t);
-
 T = ...
     1/2 * m_Body * (v_G_Body * v_G_Body')...
     + ...

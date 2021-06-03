@@ -19,7 +19,7 @@ z_Head = 0;
 r_Alpha_Hand = -deg2rad(0);
 r_Beta_Hand = deg2rad(0);
 
-l_Alpha_Hand = -deg2rad(0);
+l_Alpha_Hand = -deg2rad(90);
 l_Beta_Hand = -deg2rad(0);
 
 tau_Alpha_Body = 0;

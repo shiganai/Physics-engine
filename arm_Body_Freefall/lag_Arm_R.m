@@ -83,8 +83,8 @@ L = T - U;
 %%
 
 equations = [
-    -functionalDerivative(L, r_Alpha_Hand_Pre) == 0 + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Arm_Bottom, r_Alpha_Hand_Pre)');
-    -functionalDerivative(L, r_Beta_Hand_Pre) == 0 + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Arm_Bottom, r_Beta_Hand_Pre)');
+    -functionalDerivative(L, r_Alpha_Hand_Pre) == 0 - ([r_F_X, r_F_Y, r_F_Z] * diff(r_Arm_Bottom, r_Alpha_Hand_Pre)');
+    -functionalDerivative(L, r_Beta_Hand_Pre) == 0 - ([r_F_X, r_F_Y, r_F_Z] * diff(r_Arm_Bottom, r_Beta_Hand_Pre)');
     ];
 
 %%
@@ -138,6 +138,17 @@ submit(job)
 job.Tasks
 
 %%
+dr_Arm_Bottom = diff(r_Arm_Bottom, t);
+dr_Arm_Bottom = subs(dr_Arm_Bottom, syms_Replaced, syms_Replacing);
+
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{dr_Arm_Bottom, ...
+    'file', 'find_Dr_Arm_Bottom.m', 'outputs', ...
+    {'dr_Arm_Bottom'}});
+submit(job)
+job.Tasks
+
+%%
 r_Arm_Bottom = subs(r_Arm_Bottom, syms_Replaced, syms_Replacing);
 
 job = createJob(c);
@@ -146,7 +157,6 @@ createTask(job, @matlabFunction, 1,{r_Arm_Bottom, ...
     {'r_Arm_Bottom'}});
 submit(job)
 job.Tasks
-
 
 
 
