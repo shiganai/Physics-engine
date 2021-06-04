@@ -9,22 +9,22 @@ m_Hand = 1;
 length_Hand = 1;
 g = 1;
 
-alpha_Body = deg2rad(-80);
+alpha_Body = deg2rad(0);
 beta_Body = deg2rad(0);
 gamma_Body = deg2rad(0);
 x_Head = 0;
 y_Head = 1;
 z_Head = 0;
 
-r_Alpha_Hand = deg2rad(-80);
+r_Alpha_Hand = deg2rad(-0);
 r_Beta_Hand = deg2rad(0);
 
-l_Alpha_Hand = deg2rad(-80);
+l_Alpha_Hand = deg2rad(-0);
 l_Beta_Hand = deg2rad(0);
 
 tau_Alpha_Body = 0;
-r_Tau_Alpha_Hand = 10;
-l_Tau_Alpha_Hand = 10;
+r_Tau_Alpha_Shoulder = -0.1;
+l_Tau_Alpha_Shoulder = -0.1;
 
 %%
 
@@ -59,12 +59,21 @@ l_Z_Fixed = l_P_Fixed(3);
 
 %%
 
-time = 0:1e-2:100;
+time = 0:1e-2:2.7;
 q = [r_Alpha_Hand, 0, r_Beta_Hand, 0, l_Alpha_Hand, 0, l_Beta_Hand, 0, ...
     alpha_Body, 0, beta_Body, 0, gamma_Body, 0, ...
     x_Head, 0, y_Head, 0, z_Head, 0]';
 
-[time, q] = ode45(@(t,q) ddt(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body), time, q);
+[time_1, q_1] = ode45(@(t,q) ddt(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body, l_Tau_Alpha_Shoulder, r_Tau_Alpha_Shoulder), time, q);
+
+r_Tau_Alpha_Shoulder = -0.2;
+l_Tau_Alpha_Shoulder = -0.1;
+time = time + time_1(end);
+
+[time_2, q_2] = ode45(@(t,q) ddt(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body, l_Tau_Alpha_Shoulder, r_Tau_Alpha_Shoulder), time, q_1(end,:));
+
+time = [time_1(1:end-1); time_2];
+q = [q_1(1:end-1,:); q_2];
 
 r_Alpha_Hand = q(:, 1);
 dr_Alpha_Hand = q(:, 2);
@@ -119,12 +128,19 @@ y_Array = [r_Shoulder(:, 2), l_Shoulder(:, 2), l_Hip(:, 2), r_Hip(:, 2), r_Shoul
 z_Array = [r_Shoulder(:, 3), l_Shoulder(:, 3), l_Hip(:, 3), r_Hip(:, 3), r_Shoulder(:, 3), ...
     nan_Array, zero_Array + l_P_Fixed(3), l_Arm_Bottom(:, 3), nan_Array, zero_Array + r_P_Fixed(3), r_Arm_Bottom(:, 3)];
 
+% x_Array = [r_Shoulder(:, 1), l_Shoulder(:, 1), l_Hip(:, 1), r_Hip(:, 1), r_Shoulder(:, 1), ...
+%     nan_Array, zero_Array + r_P_Fixed(1), r_Arm_Bottom(:, 1)];
+% y_Array = [r_Shoulder(:, 2), l_Shoulder(:, 2), l_Hip(:, 2), r_Hip(:, 2), r_Shoulder(:, 2), ...
+%     nan_Array, zero_Array + r_P_Fixed(2), r_Arm_Bottom(:, 2)];
+% z_Array = [r_Shoulder(:, 3), l_Shoulder(:, 3), l_Hip(:, 3), r_Hip(:, 3), r_Shoulder(:, 3), ...
+%     nan_Array, zero_Array + r_P_Fixed(3), r_Arm_Bottom(:, 3)];
+
 anime = AnimeAndData(time, x_Array, y_Array, z_Array);
 plot_Lim = 4 * [-1, 1];
 xlim(anime.axAnime, plot_Lim)
 ylim(anime.axAnime, plot_Lim)
 zlim(anime.axAnime, plot_Lim)
-view(anime.axAnime, [-1,-1,-0])
+view(anime.axAnime, [1,-0,-0])
 
 dockfig(1)
 plot(time, [alpha_Body, beta_Body, gamma_Body])
