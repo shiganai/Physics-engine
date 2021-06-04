@@ -10,8 +10,8 @@ length_Hand = 1;
 g = 1;
 
 alpha_Body = deg2rad(0);
-beta_Body = deg2rad(0);
-gamma_Body = deg2rad(30);
+beta_Body = deg2rad(10);
+gamma_Body = deg2rad(0);
 x_Head = 0;
 y_Head = 1;
 z_Head = 0;
@@ -39,14 +39,14 @@ l_X_Fixed = l_P_Fixed(1);
 l_Y_Fixed = l_P_Fixed(2);
 l_Z_Fixed = l_P_Fixed(3);
 
-r_Arm_Bottom = find_R_Arm_Bottom(length_Hand,r_Alpha_Hand,r_Beta_Hand,r_X_Fixed,r_Y_Fixed,r_Z_Fixed);
-l_Arm_Bottom = find_L_Arm_Bottom(l_Alpha_Hand,l_Beta_Hand,l_X_Fixed,l_Y_Fixed,l_Z_Fixed,length_Hand);
+r_Arm_Bottom = FRD_R_Arm_Bottom(length_Hand,r_Alpha_Hand,r_Beta_Hand,r_X_Fixed,r_Y_Fixed,r_Z_Fixed);
+l_Arm_Bottom = FRD_L_Arm_Bottom(l_Alpha_Hand,l_Beta_Hand,l_X_Fixed,l_Y_Fixed,l_Z_Fixed,length_Hand);
 
-r_Shoulder = find_R_Shoulder(alpha_Body,beta_Body,gamma_Body,width_Body,x_Head,y_Head,z_Head);
-l_Shoulder = find_L_Shoulder(alpha_Body,beta_Body,gamma_Body,width_Body,x_Head,y_Head,z_Head);
+r_Shoulder = FRD_R_Shoulder(alpha_Body,beta_Body,gamma_Body,width_Body,x_Head,y_Head,z_Head);
+l_Shoulder = FRD_L_Shoulder(alpha_Body,beta_Body,gamma_Body,width_Body,x_Head,y_Head,z_Head);
 
-r_Hip = find_R_Hip(alpha_Body,beta_Body,gamma_Body,height_Body,width_Body,x_Head,y_Head,z_Head);
-l_Hip = find_L_Hip(alpha_Body,beta_Body,gamma_Body,height_Body,width_Body,x_Head,y_Head,z_Head);
+r_Hip = FRD_R_Hip(alpha_Body,beta_Body,gamma_Body,height_Body,width_Body,x_Head,y_Head,z_Head);
+l_Hip = FRD_L_Hip(alpha_Body,beta_Body,gamma_Body,height_Body,width_Body,x_Head,y_Head,z_Head);
 
 %%
 r_P_Fixed = r_P_Fixed + (r_Shoulder - r_Arm_Bottom);
@@ -60,8 +60,9 @@ l_X_Fixed = l_P_Fixed(1);
 l_Y_Fixed = l_P_Fixed(2);
 l_Z_Fixed = l_P_Fixed(3);
 
-r_Arm_Bottom = find_R_Arm_Bottom(length_Hand,r_Alpha_Hand,r_Beta_Hand,r_X_Fixed,r_Y_Fixed,r_Z_Fixed);
-l_Arm_Bottom = find_L_Arm_Bottom(l_Alpha_Hand,l_Beta_Hand,l_X_Fixed,l_Y_Fixed,l_Z_Fixed,length_Hand);
+
+r_Arm_Bottom = FRD_R_Arm_Bottom(length_Hand,r_Alpha_Hand,r_Beta_Hand,r_X_Fixed,r_Y_Fixed,r_Z_Fixed);
+l_Arm_Bottom = FRD_L_Arm_Bottom(l_Alpha_Hand,l_Beta_Hand,l_X_Fixed,l_Y_Fixed,l_Z_Fixed,length_Hand);
 
 %%
 nan_Array = nan(size(l_Shoulder, 1), 1);
