@@ -50,20 +50,20 @@ I_Hand = 1/12 * m_Hand * [
 l_Arm_Bottom = [0, 0 + length_Hand, 0, 1];
 l_Arm_G = [0, 0 + length_Hand/2, 0, 1];
 
-%% rotate alpha around x
-l_Tauvec_Alpha = symfun([1, 0, 0, 1], t);
-l_Trans_Matrix_Alpha = [1, 0, 0, 0; 0, cos(l_Alpha_Hand_Pre), -sin(l_Alpha_Hand_Pre), 0; 0, sin(l_Alpha_Hand_Pre), cos(l_Alpha_Hand_Pre), 0; 0, 0, 0, 1]';
-
-l_Arm_Bottom = l_Arm_Bottom * l_Trans_Matrix_Alpha;
-l_Arm_G = l_Arm_G * l_Trans_Matrix_Alpha;
-
 %% rotate beta around z
 l_Tauvec_Beta = symfun([0, 0, 1, 1], t);
 l_Trans_Matrix_Beta = [cos(-l_Beta_Hand_Pre), -sin(-l_Beta_Hand_Pre), 0, 0; sin(-l_Beta_Hand_Pre), cos(-l_Beta_Hand_Pre), 0, 0; 0, 0, 1, 0; 0, 0, 0, 1]';
 
 l_Arm_Bottom = l_Arm_Bottom * l_Trans_Matrix_Beta;
 l_Arm_G = l_Arm_G * l_Trans_Matrix_Beta;
-l_Tauvec_Alpha = l_Tauvec_Alpha * l_Trans_Matrix_Beta;
+
+%% rotate alpha around x
+l_Tauvec_Alpha = symfun([1, 0, 0, 1], t);
+l_Trans_Matrix_Alpha = [1, 0, 0, 0; 0, cos(l_Alpha_Hand_Pre), -sin(l_Alpha_Hand_Pre), 0; 0, sin(l_Alpha_Hand_Pre), cos(l_Alpha_Hand_Pre), 0; 0, 0, 0, 1]';
+
+l_Arm_Bottom = l_Arm_Bottom * l_Trans_Matrix_Alpha;
+l_Arm_G = l_Arm_G * l_Trans_Matrix_Alpha;
+l_Tauvec_Beta = l_Tauvec_Beta * l_Trans_Matrix_Alpha;
 
 %% move origin
 l_Trans_Matrix_Origin = [1, 0, 0, l_X_Fixed; 0, 1, 0, l_Y_Fixed; 0, 0, 1, l_Z_Fixed; 0, 0, 0, 1]';
@@ -173,7 +173,7 @@ job.Tasks
 %}
 
 %% Half forward dynamics
-
+%{/
 variables = [ddl_Alpha_Hand, l_Tau_Beta_Shoulder];
 
 [A, B] = equationsToMatrix(equations, variables);
@@ -193,11 +193,41 @@ ddl_Arm_Bottom = diff(l_Arm_Bottom, t, t);
 ddl_Arm_Bottom = subs(ddl_Arm_Bottom, syms_Replaced, syms_Replacing);
 ddl_Arm_Bottom = subs(ddl_Arm_Bottom, variables, X');
 
-[coeffs_Ddl_Arm_Bottom(1, :), ~] = coeffs(ddl_Arm_Bottom(1), [l_F_X, l_F_Y, l_F_Z]);
+target_Variables = [l_F_X, l_F_Y, l_F_Z, 1];
+coeffs_Ddl_Arm_Bottom = sym(zeros(3, size(target_Variables, 2)));
 
-[coeffs_Ddl_Arm_Bottom(2, :), ~] = coeffs(ddl_Arm_Bottom(2), [l_F_X, l_F_Y, l_F_Z]);
+[coeffs_Tmp, terms_Tmp] = coeffs(ddl_Arm_Bottom(1), target_Variables(1:end-1));
+if ~isequal(size(terms_Tmp), size(target_Variables))
+    for ii = 1:size(target_Variables, 2)
+        if any(terms_Tmp == target_Variables(ii))
+            coeffs_Ddl_Arm_Bottom(1, ii) = coeffs_Tmp(terms_Tmp == target_Variables(ii));
+        end
+    end
+else
+    coeffs_Ddl_Arm_Bottom(1, :) = coeffs_Tmp;
+end
 
-[coeffs_Ddl_Arm_Bottom(3, :), ~] = coeffs(ddl_Arm_Bottom(3), [l_F_X, l_F_Y, l_F_Z]);
+[coeffs_Tmp, terms_Tmp] = coeffs(ddl_Arm_Bottom(2), target_Variables(1:end-1));
+if ~isequal(size(terms_Tmp), size(target_Variables))
+    for ii = 1:size(target_Variables, 2)
+        if any(terms_Tmp == target_Variables(ii))
+            coeffs_Ddl_Arm_Bottom(2, ii) = coeffs_Tmp(terms_Tmp == target_Variables(ii));
+        end
+    end
+else
+    coeffs_Ddl_Arm_Bottom(2, :) = coeffs_Tmp;
+end
+
+[coeffs_Tmp, terms_Tmp] = coeffs(ddl_Arm_Bottom(3), target_Variables(1:end-1));
+if ~isequal(size(terms_Tmp), size(target_Variables))
+    for ii = 1:size(target_Variables, 2)
+        if any(terms_Tmp == target_Variables(ii))
+            coeffs_Ddl_Arm_Bottom(3, ii) = coeffs_Tmp(terms_Tmp == target_Variables(ii));
+        end
+    end
+else
+    coeffs_Ddl_Arm_Bottom(3, :) = coeffs_Tmp;
+end
 
 size(coeffs_Ddl_Arm_Bottom)
 
@@ -247,7 +277,7 @@ createTask(job, @matlabFunction, 1,{...
     }});
 submit(job)
 job.Tasks
-
+%}
 
 %% Full Reverse dynamics
 %{

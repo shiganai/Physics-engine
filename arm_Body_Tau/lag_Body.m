@@ -13,15 +13,15 @@ syms r_Beta_Hand real
 syms r_Tau_Alpha_Shoulder real
 syms r_Tau_Beta_Shoulder real
 
-%% rotate alpha around x
-r_Tauvec_Alpha = symfun([1, 0, 0, 1], t);
-r_Trans_Matrix_Alpha = [1, 0, 0, 0; 0, cos(r_Alpha_Hand), -sin(r_Alpha_Hand), 0; 0, sin(r_Alpha_Hand), cos(r_Alpha_Hand), 0; 0, 0, 0, 1]';
-
 %% rotate beta around z
 r_Tauvec_Beta = symfun([0, 0, 1, 1], t);
 r_Trans_Matrix_Beta = [cos(r_Beta_Hand), -sin(r_Beta_Hand), 0, 0; sin(r_Beta_Hand), cos(r_Beta_Hand), 0, 0; 0, 0, 1, 0; 0, 0, 0, 1]';
 
-r_Tauvec_Alpha = r_Tauvec_Alpha * r_Trans_Matrix_Beta;
+%% rotate alpha around x
+r_Tauvec_Alpha = symfun([1, 0, 0, 1], t);
+r_Trans_Matrix_Alpha = [1, 0, 0, 0; 0, cos(r_Alpha_Hand), -sin(r_Alpha_Hand), 0; 0, sin(r_Alpha_Hand), cos(r_Alpha_Hand), 0; 0, 0, 0, 1]';
+
+r_Tauvec_Beta = r_Tauvec_Beta * r_Trans_Matrix_Alpha;
 
 %% find r_Tau vector
 r_Tauvec_Alpha = formula(r_Tauvec_Alpha);
@@ -38,15 +38,15 @@ syms l_Beta_Hand real
 syms l_Tau_Alpha_Shoulder real
 syms l_Tau_Beta_Shoulder real
 
-%% rotate alpha around x
-l_Tauvec_Alpha = symfun([1, 0, 0, 1], t);
-l_Trans_Matrix_Alpha = [1, 0, 0, 0; 0, cos(l_Alpha_Hand), -sin(l_Alpha_Hand), 0; 0, sin(l_Alpha_Hand), cos(l_Alpha_Hand), 0; 0, 0, 0, 1]';
-
 %% rotate beta around z
 l_Tauvec_Beta = symfun([0, 0, 1, 1], t);
 l_Trans_Matrix_Beta = [cos(-l_Beta_Hand), -sin(-l_Beta_Hand), 0, 0; sin(-l_Beta_Hand), cos(-l_Beta_Hand), 0, 0; 0, 0, 1, 0; 0, 0, 0, 1]';
 
-l_Tauvec_Alpha = l_Tauvec_Alpha * l_Trans_Matrix_Beta;
+%% rotate alpha around x
+l_Tauvec_Alpha = symfun([1, 0, 0, 1], t);
+l_Trans_Matrix_Alpha = [1, 0, 0, 0; 0, cos(l_Alpha_Hand), -sin(l_Alpha_Hand), 0; 0, sin(l_Alpha_Hand), cos(l_Alpha_Hand), 0; 0, 0, 0, 1]';
+
+l_Tauvec_Beta = l_Tauvec_Beta * l_Trans_Matrix_Alpha;
 
 %% find l_Tau vector
 l_Tauvec_Alpha = formula(l_Tauvec_Alpha);
@@ -237,7 +237,7 @@ equations = [
 equations = subs(equations, syms_Replaced, syms_Replacing);
 
 %% Full forward dynamics
-%{/
+%{
 variables = [ddalpha_Body, ddbeta_Body, ddgamma_Body, ddx_Head, ddy_Head, ddz_Head];
 
 [A, B] = equationsToMatrix(equations, variables);
@@ -307,6 +307,7 @@ job.Tasks
 %}
 
 %% Half forward dynamics
+%{/
 variables = [ddalpha_Body, ddbeta_Body, ddgamma_Body, ddx_Head, ddy_Head, ddz_Head];
 
 [A, B] = equationsToMatrix(equations, variables);
@@ -434,9 +435,9 @@ createTask(job, @matlabFunction, 1,{...
     }});
 submit(job)
 job.Tasks
-
+%}
 %% Full Reverse dynamics
-%{/
+%{
 ddr_Shoulder = diff(r_Shoulder, t, t);
 ddr_Shoulder = subs(ddr_Shoulder, syms_Replaced, syms_Replacing);
 ddl_Shoulder = diff(l_Shoulder, t, t);

@@ -55,7 +55,7 @@ coeffs_Ddr_Arm_Bottom_Force = [
     A21, A22, A23, 0, 0, 0;
     A31, A32, A33, 0, 0, 0;
     ];
-[A11,A12,A13] = HFD_Coeffs_R_Tau_Beta_Shoulder_Force(ddr_Beta_Hand,dr_Beta_Hand,dr_Alpha_Hand,length_Hand,m_Hand,r_Alpha_Hand,r_Beta_Hand);
+[A11,A12,A13] = HFD_Coeffs_R_Tau_Beta_Shoulder_Force(length_Hand,r_Alpha_Hand,r_Beta_Hand);
 coeffs_R_Tau_Beta_Shoulder_Force = [A11, A12, A13, 0, 0, 0];
 [A11,A21,A31] = HFD_Coeffs_Ddr_Arm_Bottom_Constant(ddr_Beta_Hand,dr_Beta_Hand,dr_Alpha_Hand,g,length_Hand,m_Hand,r_Alpha_Hand,r_Beta_Hand,r_Tau_Alpha_Shoulder);
 coeffs_Ddr_Arm_Bottom_Constant = [A11, A21, A31]';
@@ -67,7 +67,7 @@ coeffs_Ddl_Arm_Bottom_Force = [
     0, 0, 0, A21, A22, A23, ;
     0, 0, 0, A31, A32, A33, ;
     ];
-[A11,A12,A13] = HFD_Coeffs_L_Tau_Beta_Shoulder_Force(ddl_Beta_Hand,dl_Beta_Hand,dl_Alpha_Hand,l_Alpha_Hand,l_Beta_Hand,length_Hand,m_Hand);
+[A11,A12,A13] = HFD_Coeffs_L_Tau_Beta_Shoulder_Force(l_Alpha_Hand,l_Beta_Hand,length_Hand);
 coeffs_L_Tau_Beta_Shoulder_Force = [0, 0, 0, A11, A12, A13];
 [A11,A21,A31] = HFD_Coeffs_Ddl_Arm_Bottom_Constant(ddl_Beta_Hand,dl_Beta_Hand,dl_Alpha_Hand,g,l_Alpha_Hand,l_Beta_Hand,l_Tau_Alpha_Shoulder,length_Hand,m_Hand);
 coeffs_Ddl_Arm_Bottom_Constant = [A11, A21, A31]';
@@ -79,13 +79,13 @@ coeffs_Ddr_Shoulder_Force = [
     A21, A22, A23, A24, A25, A26;
     A31, A32, A33, A34, A35, A36;
     ];
-[A11,A12,A21,A22,A31,A32] = HFD_Coeffs_Ddr_Shoulder_Tau_Beta(alpha_Body,beta_Body,depth_Body,gamma_Body,height_Body,m_Body,width_Body);
+[A11,A12,A21,A22,A31,A32] = HFD_Coeffs_Ddr_Shoulder_Tau_Beta(alpha_Body,beta_Body,depth_Body,gamma_Body,height_Body,l_Alpha_Hand,m_Body,r_Alpha_Hand,width_Body);
 coeffs_Ddr_Shoulder_Tau_Beta = [
     A11, A12, ;
     A21, A22, ;
     A31, A32, ;
     ];
-[A11,A21,A31] = HFD_Coeffs_Ddr_Shoulder_Constant(alpha_Body,beta_Body,dalpha_Body,dbeta_Body,depth_Body,dgamma_Body,g,gamma_Body,height_Body,l_Beta_Hand,l_Tau_Alpha_Shoulder,m_Body,r_Beta_Hand,r_Tau_Alpha_Shoulder,width_Body);
+[A11,A21,A31] = HFD_Coeffs_Ddr_Shoulder_Constant(alpha_Body,beta_Body,dalpha_Body,dbeta_Body,depth_Body,dgamma_Body,g,gamma_Body,height_Body,l_Tau_Alpha_Shoulder,m_Body,r_Tau_Alpha_Shoulder,width_Body);
 coeffs_Ddr_Shoulder_Constant = [A11,A21,A31]';
 
 %% shoulder_L
@@ -95,13 +95,13 @@ coeffs_Ddl_Shoulder_Force = [
     A21, A22, A23, A24, A25, A26, ;
     A31, A32, A33, A34, A35, A36, ;
     ];
-[A11,A12,A21,A22,A31,A32] = HFD_Coeffs_Ddl_Shoulder_Tau_Beta(alpha_Body,beta_Body,depth_Body,gamma_Body,height_Body,m_Body,width_Body);
+[A11,A12,A21,A22,A31,A32] = HFD_Coeffs_Ddl_Shoulder_Tau_Beta(alpha_Body,beta_Body,depth_Body,gamma_Body,height_Body,l_Alpha_Hand,m_Body,r_Alpha_Hand,width_Body);
 coeffs_Ddl_Shoulder_Tau_Beta = [
     A11, A12, ;
     A21, A22, ;
     A31, A32, ;
     ];
-[A11,A21,A31] = HFD_Coeffs_Ddl_Shoulder_Constant(alpha_Body,beta_Body,dalpha_Body,dbeta_Body,depth_Body,dgamma_Body,g,gamma_Body,height_Body,l_Beta_Hand,l_Tau_Alpha_Shoulder,m_Body,r_Beta_Hand,r_Tau_Alpha_Shoulder,width_Body);
+[A11,A21,A31] = HFD_Coeffs_Ddl_Shoulder_Constant(alpha_Body,beta_Body,dalpha_Body,dbeta_Body,depth_Body,dgamma_Body,g,gamma_Body,height_Body,l_Tau_Alpha_Shoulder,m_Body,r_Tau_Alpha_Shoulder,width_Body);
 coeffs_Ddl_Shoulder_Constant = [A11,A21,A31]';
 
 %%
