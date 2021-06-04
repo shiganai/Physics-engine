@@ -104,7 +104,7 @@ l_F_Z = f_All(6);
 % 
 % [ddr_Arm_Bottom - ddr_Shoulder, ddl_Arm_Bottom - ddl_Shoulder]
 
-dd_Threshold = 0;
+dd_Threshold = 1;
 if abs(ddbeta_Body) < dd_Threshold
     if (dbeta_Body == 0)
         ddbeta_Body = 0;

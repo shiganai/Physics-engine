@@ -57,20 +57,20 @@ l_Z_Fixed = l_P_Fixed(3);
 
 %%
 
-time = 0:1e-2:0.5;
-velocity = 2;
+time = 0:1e-2:50;
+velocity = 0;
 q = [r_Alpha_Hand, velocity, r_Beta_Hand, 0, l_Alpha_Hand, velocity, l_Beta_Hand, 0, ...
     alpha_Body, velocity, beta_Body, 0, gamma_Body, 0, ...
     x_Head, 0, y_Head, 0, z_Head, 0]';
 
-r_Tau_Alpha_Shoulder = 1;
+r_Tau_Alpha_Shoulder = 0;
 l_Tau_Alpha_Shoulder = 0;
 l_Tau_Beta_Shoulder = 0;
 r_Tau_Beta_Shoulder = 0;
 
 [time_1, q_1] = ode45(@(t,q) ddt_FFD(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body, l_Tau_Alpha_Shoulder, r_Tau_Alpha_Shoulder, l_Tau_Beta_Shoulder, r_Tau_Beta_Shoulder), time, q);
 
-r_Tau_Alpha_Shoulder = -1;
+r_Tau_Alpha_Shoulder = 0;
 l_Tau_Alpha_Shoulder = 0;
 l_Tau_Beta_Shoulder = 0;
 r_Tau_Beta_Shoulder = 0;
