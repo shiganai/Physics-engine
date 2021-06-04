@@ -9,17 +9,17 @@ m_Hand = 1;
 length_Hand = 1;
 g = 1;
 
-alpha_Body = deg2rad(-80);
+alpha_Body = deg2rad(-0);
 beta_Body = deg2rad(0);
 gamma_Body = deg2rad(0);
 x_Head = 0;
 y_Head = 1;
 z_Head = 0;
 
-r_Alpha_Hand = deg2rad(-80);
+r_Alpha_Hand = deg2rad(-0);
 r_Beta_Hand = deg2rad(0);
 
-l_Alpha_Hand = deg2rad(-80);
+l_Alpha_Hand = deg2rad(-0);
 l_Beta_Hand = deg2rad(0);
 
 tau_Alpha_Body = 0;

@@ -90,13 +90,13 @@ coeffs_Ddr_Shoulder = find_Coeffs_Ddr_Shoulder(alpha_Body,beta_Body,dalpha_Body,
 coeffs_Ddl_Shoulder = find_Coeffs_Ddl_Shoulder(alpha_Body,beta_Body,dalpha_Body,dbeta_Body,depth_Body,dgamma_Body,g,gamma_Body,height_Body,m_Body,width_Body);
 
 coeffs_Matrix = [
-    coeffs_Ddl_Arm_Bottom(:, 1:6) - coeffs_Ddl_Shoulder(:, 1:6);
     coeffs_Ddr_Arm_Bottom(:, 1:6) - coeffs_Ddr_Shoulder(:, 1:6);
+    coeffs_Ddl_Arm_Bottom(:, 1:6) - coeffs_Ddl_Shoulder(:, 1:6);
     ];
 
 coeffs_Target = [
-    coeffs_Ddl_Arm_Bottom(:, 7) - coeffs_Ddl_Shoulder(:, 7);
     coeffs_Ddr_Arm_Bottom(:, 7) - coeffs_Ddr_Shoulder(:, 7);
+    coeffs_Ddl_Arm_Bottom(:, 7) - coeffs_Ddl_Shoulder(:, 7);
     ];
 
 f_All = inv(coeffs_Matrix) * (-coeffs_Target);
