@@ -9,22 +9,20 @@ m_Hand = 1;
 length_Hand = 1;
 g = 1;
 
-alpha_Body = deg2rad(0);
+alpha_Body = deg2rad(180);
 beta_Body = deg2rad(0);
 gamma_Body = deg2rad(0);
 x_Head = 0;
-y_Head = 1;
+y_Head = -1;
 z_Head = 0;
 
-r_Alpha_Hand = deg2rad(-0);
+r_Alpha_Hand = deg2rad(180);
 r_Beta_Hand = deg2rad(0);
 
-l_Alpha_Hand = deg2rad(-0);
+l_Alpha_Hand = deg2rad(180);
 l_Beta_Hand = deg2rad(0);
 
 tau_Alpha_Body = 0;
-r_Tau_Alpha_Shoulder = 0;
-l_Tau_Alpha_Shoulder = 0;
 
 %%
 
@@ -39,11 +37,11 @@ l_X_Fixed = l_P_Fixed(1);
 l_Y_Fixed = l_P_Fixed(2);
 l_Z_Fixed = l_P_Fixed(3);
 
-r_Arm_Bottom = find_R_Arm_Bottom(length_Hand,r_Alpha_Hand,r_Beta_Hand,r_X_Fixed,r_Y_Fixed,r_Z_Fixed);
-l_Arm_Bottom = find_L_Arm_Bottom(l_Alpha_Hand,l_Beta_Hand,l_X_Fixed,l_Y_Fixed,l_Z_Fixed,length_Hand);
+r_Arm_Bottom = FRD_R_Arm_Bottom(length_Hand,r_Alpha_Hand,r_Beta_Hand,r_X_Fixed,r_Y_Fixed,r_Z_Fixed);
+l_Arm_Bottom = FRD_L_Arm_Bottom(l_Alpha_Hand,l_Beta_Hand,l_X_Fixed,l_Y_Fixed,l_Z_Fixed,length_Hand);
 
-r_Shoulder = find_R_Shoulder(alpha_Body,beta_Body,gamma_Body,width_Body,x_Head,y_Head,z_Head);
-l_Shoulder = find_L_Shoulder(alpha_Body,beta_Body,gamma_Body,width_Body,x_Head,y_Head,z_Head);
+r_Shoulder = FRD_R_Shoulder(alpha_Body,beta_Body,gamma_Body,width_Body,x_Head,y_Head,z_Head);
+l_Shoulder = FRD_L_Shoulder(alpha_Body,beta_Body,gamma_Body,width_Body,x_Head,y_Head,z_Head);
 
 %%
 r_P_Fixed = r_P_Fixed + (r_Shoulder - r_Arm_Bottom);
@@ -59,18 +57,28 @@ l_Z_Fixed = l_P_Fixed(3);
 
 %%
 
-time = 0:1e-2:2.7;
-q = [r_Alpha_Hand, 0, r_Beta_Hand, 0, l_Alpha_Hand, 0, l_Beta_Hand, 0, ...
-    alpha_Body, 0, beta_Body, 0, gamma_Body, 0, ...
+time = 0:1e-2:0.5;
+velocity = 2;
+q = [r_Alpha_Hand, velocity, r_Beta_Hand, 0, l_Alpha_Hand, velocity, l_Beta_Hand, 0, ...
+    alpha_Body, velocity, beta_Body, 0, gamma_Body, 0, ...
     x_Head, 0, y_Head, 0, z_Head, 0]';
 
-[time_1, q_1] = ode45(@(t,q) ddt_2d(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body, l_Tau_Alpha_Shoulder, r_Tau_Alpha_Shoulder), time, q);
+r_Tau_Alpha_Shoulder = 1;
+l_Tau_Alpha_Shoulder = 0;
+l_Tau_Beta_Shoulder = 0;
+r_Tau_Beta_Shoulder = 0;
 
-r_Tau_Alpha_Shoulder = -0.2;
-l_Tau_Alpha_Shoulder = -0.1;
+[time_1, q_1] = ode45(@(t,q) ddt_FFD(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body, l_Tau_Alpha_Shoulder, r_Tau_Alpha_Shoulder, l_Tau_Beta_Shoulder, r_Tau_Beta_Shoulder), time, q);
+
+r_Tau_Alpha_Shoulder = -1;
+l_Tau_Alpha_Shoulder = 0;
+l_Tau_Beta_Shoulder = 0;
+r_Tau_Beta_Shoulder = 0;
+
 time = time + time_1(end);
 
-[time_2, q_2] = ode45(@(t,q) ddt_2d(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body, l_Tau_Alpha_Shoulder, r_Tau_Alpha_Shoulder), time, q_1(end,:));
+[time_2, q_2] = ode45(@(t,q) ddt_FFD(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body, l_Tau_Alpha_Shoulder, r_Tau_Alpha_Shoulder, l_Tau_Beta_Shoulder, r_Tau_Beta_Shoulder), time, q_1(end,:));
+% [time_2, q_2] = ode45(@(t,q) ddt_HFD(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body, l_Tau_Alpha_Shoulder, r_Tau_Alpha_Shoulder), time, q_1(end,:));
 
 time = [time_1(1:end-1); time_2];
 q = [q_1(1:end-1,:); q_2];
@@ -109,14 +117,14 @@ z_Head = q(:, 19);
 dz_Head = q(:, 20);
 
 %%
-r_Arm_Bottom = find_R_Arm_Bottom(length_Hand,r_Alpha_Hand,r_Beta_Hand,r_X_Fixed,r_Y_Fixed,r_Z_Fixed);
-l_Arm_Bottom = find_L_Arm_Bottom(l_Alpha_Hand,l_Beta_Hand,l_X_Fixed,l_Y_Fixed,l_Z_Fixed,length_Hand);
+r_Arm_Bottom = FRD_R_Arm_Bottom(length_Hand,r_Alpha_Hand,r_Beta_Hand,r_X_Fixed,r_Y_Fixed,r_Z_Fixed);
+l_Arm_Bottom = FRD_L_Arm_Bottom(l_Alpha_Hand,l_Beta_Hand,l_X_Fixed,l_Y_Fixed,l_Z_Fixed,length_Hand);
 
-r_Shoulder = find_R_Shoulder(alpha_Body,beta_Body,gamma_Body,width_Body,x_Head,y_Head,z_Head);
-l_Shoulder = find_L_Shoulder(alpha_Body,beta_Body,gamma_Body,width_Body,x_Head,y_Head,z_Head);
+r_Shoulder = FRD_R_Shoulder(alpha_Body,beta_Body,gamma_Body,width_Body,x_Head,y_Head,z_Head);
+l_Shoulder = FRD_L_Shoulder(alpha_Body,beta_Body,gamma_Body,width_Body,x_Head,y_Head,z_Head);
 
-r_Hip = find_R_Hip(alpha_Body,beta_Body,gamma_Body,height_Body,width_Body,x_Head,y_Head,z_Head);
-l_Hip = find_L_Hip(alpha_Body,beta_Body,gamma_Body,height_Body,width_Body,x_Head,y_Head,z_Head);
+r_Hip = FRD_R_Hip(alpha_Body,beta_Body,gamma_Body,height_Body,width_Body,x_Head,y_Head,z_Head);
+l_Hip = FRD_L_Hip(alpha_Body,beta_Body,gamma_Body,height_Body,width_Body,x_Head,y_Head,z_Head);
 
 nan_Array = nan(size(l_Shoulder, 1), 1);
 zero_Array = zeros(size(l_Shoulder, 1), 1);
@@ -140,7 +148,7 @@ plot_Lim = 4 * [-1, 1];
 xlim(anime.axAnime, plot_Lim)
 ylim(anime.axAnime, plot_Lim)
 zlim(anime.axAnime, plot_Lim)
-view(anime.axAnime, [1,-0,-0])
+view(anime.axAnime, [0,0,1])
 
 dockfig(1)
 plot(time, [alpha_Body, beta_Body, gamma_Body])
@@ -150,6 +158,12 @@ plot(time, [dbeta_Body, dgamma_Body])
 
 dockfig(3)
 plot(time, [ddbeta_Body, ddgamma_Body])
+
+dockfig(4)
+plot(time, [r_Alpha_Hand, l_Alpha_Hand])
+
+dockfig(5)
+plot(time, [r_Beta_Hand, l_Beta_Hand])
 
 
 
