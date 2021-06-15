@@ -1,4 +1,4 @@
-function dotq = ddt(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body, l_Tau_Alpha_Shoulder, r_Tau_Alpha_Shoulder, l_Tau_Beta_Shoulder, r_Tau_Beta_Shoulder)
+function dotq = ddt_FFD(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body, l_Tau_Alpha_Shoulder, r_Tau_Alpha_Shoulder, l_Tau_Beta_Shoulder, r_Tau_Beta_Shoulder)
 
 r_X_Fixed = r_P_Fixed(1);
 r_Y_Fixed = r_P_Fixed(2);
@@ -59,14 +59,14 @@ coeffs_Ddl_Arm_Bottom = [
     0,0,0,A31,A32,A33,A34;
     ];
 
-[A11,A12,A13,A14,A15,A16,A17,A21,A22,A23,A24,A25,A26,A27,A31,A32,A33,A34,A35,A36,A37] = FFD_Coeffs_Ddr_Shoulder(alpha_Body,beta_Body,dalpha_Body,dbeta_Body,depth_Body,dgamma_Body,g,gamma_Body,height_Body,l_Beta_Hand,l_Tau_Beta_Shoulder,l_Tau_Alpha_Shoulder,m_Body,r_Beta_Hand,r_Tau_Beta_Shoulder,r_Tau_Alpha_Shoulder,width_Body);
+[A11,A12,A13,A14,A15,A16,A17,A21,A22,A23,A24,A25,A26,A27,A31,A32,A33,A34,A35,A36,A37] = FFD_Coeffs_Ddr_Shoulder(alpha_Body,beta_Body,dalpha_Body,dbeta_Body,depth_Body,dgamma_Body,g,gamma_Body,height_Body,l_Alpha_Hand,l_Tau_Beta_Shoulder,l_Tau_Alpha_Shoulder,m_Body,r_Beta_Hand,r_Tau_Beta_Shoulder,r_Tau_Alpha_Shoulder,width_Body);
 coeffs_Ddr_Shoulder = [
     A11,A12,A13,A14,A15,A16,A17,;
     A21,A22,A23,A24,A25,A26,A27,;
     A31,A32,A33,A34,A35,A36,A37
     ];
 
-[A11,A12,A13,A14,A15,A16,A17,A21,A22,A23,A24,A25,A26,A27,A31,A32,A33,A34,A35,A36,A37] = FFD_Coeffs_Ddl_Shoulder(alpha_Body,beta_Body,dalpha_Body,dbeta_Body,depth_Body,dgamma_Body,g,gamma_Body,height_Body,l_Beta_Hand,l_Tau_Beta_Shoulder,l_Tau_Alpha_Shoulder,m_Body,r_Beta_Hand,r_Tau_Beta_Shoulder,r_Tau_Alpha_Shoulder,width_Body);
+[A11,A12,A13,A14,A15,A16,A17,A21,A22,A23,A24,A25,A26,A27,A31,A32,A33,A34,A35,A36,A37] = FFD_Coeffs_Ddl_Shoulder(alpha_Body,beta_Body,dalpha_Body,dbeta_Body,depth_Body,dgamma_Body,g,gamma_Body,height_Body,l_Alpha_Hand,l_Tau_Beta_Shoulder,l_Tau_Alpha_Shoulder,m_Body,r_Beta_Hand,r_Tau_Beta_Shoulder,r_Tau_Alpha_Shoulder,width_Body);
 coeffs_Ddl_Shoulder = [
     A11,A12,A13,A14,A15,A16,A17,;
     A21,A22,A23,A24,A25,A26,A27,;
@@ -95,7 +95,7 @@ l_F_Z = f_All(6);
 
 [ddr_Alpha_Hand,ddr_Beta_Hand] = FFD_Dds_Arm_R(dr_Beta_Hand,dr_Alpha_Hand,g,length_Hand,m_Hand,r_Alpha_Hand,r_Beta_Hand,r_F_X,r_F_Y,r_F_Z,r_Tau_Beta_Shoulder,r_Tau_Alpha_Shoulder);
 [ddl_Alpha_Hand,ddl_Beta_Hand] = FFD_Dds_Arm_L(dl_Beta_Hand,dl_Alpha_Hand,g,l_Alpha_Hand,l_Beta_Hand,l_F_X,l_F_Y,l_F_Z,l_Tau_Beta_Shoulder,l_Tau_Alpha_Shoulder,length_Hand,m_Hand);
-[ddalpha_Body,ddbeta_Body,ddgamma_Body,ddx_Head,ddy_Head,ddz_Head] = FFD_Dds_Body(alpha_Body,beta_Body,dalpha_Body,depth_Body,dgamma_Body,g,gamma_Body,height_Body,l_Beta_Hand,l_F_X,l_F_Y,l_F_Z,l_Tau_Beta_Shoulder,l_Tau_Alpha_Shoulder,m_Body,r_Beta_Hand,r_F_X,r_F_Y,r_F_Z,r_Tau_Beta_Shoulder,r_Tau_Alpha_Shoulder,width_Body);
+[ddalpha_Body,ddbeta_Body,ddgamma_Body,ddx_Head,ddy_Head,ddz_Head] = FFD_Dds_Body(alpha_Body,beta_Body,dalpha_Body,depth_Body,dgamma_Body,g,gamma_Body,height_Body,l_Alpha_Hand,l_F_X,l_F_Y,l_F_Z,l_Tau_Beta_Shoulder,l_Tau_Alpha_Shoulder,m_Body,r_Beta_Hand,r_F_X,r_F_Y,r_F_Z,r_Tau_Beta_Shoulder,r_Tau_Alpha_Shoulder,width_Body);
 
 % ddr_Arm_Bottom = find_Ddr_Arm_Bottom(dr_Beta_Hand,dr_Alpha_Hand,g,length_Hand,m_Hand,r_Alpha_Hand,r_Beta_Hand,r_F_X,r_F_Y,r_F_Z);
 % ddl_Arm_Bottom = find_Ddl_Arm_Bottom(dl_Beta_Hand,dl_Alpha_Hand,g,l_Alpha_Hand,l_Beta_Hand,l_F_X,l_F_Y,l_F_Z,length_Hand,m_Hand);
@@ -104,7 +104,7 @@ l_F_Z = f_All(6);
 % 
 % [ddr_Arm_Bottom - ddr_Shoulder, ddl_Arm_Bottom - ddl_Shoulder]
 
-dd_Threshold = 1;
+dd_Threshold = 0.1;
 if abs(ddbeta_Body) < dd_Threshold
     if (dbeta_Body == 0)
         ddbeta_Body = 0;

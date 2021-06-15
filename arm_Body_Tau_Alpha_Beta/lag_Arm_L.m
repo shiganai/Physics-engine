@@ -50,19 +50,25 @@ I_Hand = 1/12 * m_Hand * [
 l_Arm_Bottom = [0, 0 + length_Hand, 0, 1];
 l_Arm_G = [0, 0 + length_Hand/2, 0, 1];
 
-%% rotate beta around z
 l_Tauvec_Beta = symfun([0, 0, 1, 1], t);
+l_Tauvec_Alpha = symfun([1, 0, 0, 1], t);
+
+%% rotate alpha around x
+l_Trans_Matrix_Alpha = [1, 0, 0, 0; 0, cos(l_Alpha_Hand_Pre), -sin(l_Alpha_Hand_Pre), 0; 0, sin(l_Alpha_Hand_Pre), cos(l_Alpha_Hand_Pre), 0; 0, 0, 0, 1]';
+
+l_Arm_Bottom = l_Arm_Bottom * l_Trans_Matrix_Alpha;
+l_Arm_G = l_Arm_G * l_Trans_Matrix_Alpha;
+
+l_Tauvec_Alpha = l_Tauvec_Alpha * l_Trans_Matrix_Alpha;
+% l_Tauvec_Beta = l_Tauvec_Beta * l_Trans_Matrix_Alpha;
+
+%% rotate beta around z
 l_Trans_Matrix_Beta = [cos(-l_Beta_Hand_Pre), -sin(-l_Beta_Hand_Pre), 0, 0; sin(-l_Beta_Hand_Pre), cos(-l_Beta_Hand_Pre), 0, 0; 0, 0, 1, 0; 0, 0, 0, 1]';
 
 l_Arm_Bottom = l_Arm_Bottom * l_Trans_Matrix_Beta;
 l_Arm_G = l_Arm_G * l_Trans_Matrix_Beta;
 
-%% rotate alpha around x
-l_Tauvec_Alpha = symfun([1, 0, 0, 1], t);
-l_Trans_Matrix_Alpha = [1, 0, 0, 0; 0, cos(l_Alpha_Hand_Pre), -sin(l_Alpha_Hand_Pre), 0; 0, sin(l_Alpha_Hand_Pre), cos(l_Alpha_Hand_Pre), 0; 0, 0, 0, 1]';
-
-l_Arm_Bottom = l_Arm_Bottom * l_Trans_Matrix_Alpha;
-l_Arm_G = l_Arm_G * l_Trans_Matrix_Alpha;
+l_Tauvec_Alpha = l_Tauvec_Alpha * l_Trans_Matrix_Alpha;
 l_Tauvec_Beta = l_Tauvec_Beta * l_Trans_Matrix_Alpha;
 
 %% move origin
@@ -129,7 +135,7 @@ equations = [
 equations = subs(equations, syms_Replaced, syms_Replacing);
 
 %% Full forward dynamics
-%{
+%{/
 variables = [ddl_Alpha_Hand, ddl_Beta_Hand];
 
 [A, B] = equationsToMatrix(equations, variables);
@@ -173,7 +179,7 @@ job.Tasks
 %}
 
 %% Half forward dynamics
-%{/
+%{
 variables = [ddl_Alpha_Hand, l_Tau_Beta_Shoulder];
 
 [A, B] = equationsToMatrix(equations, variables);
@@ -280,7 +286,7 @@ job.Tasks
 %}
 
 %% Full Reverse dynamics
-%{
+%{/
 ddl_Arm_Bottom = diff(l_Arm_Bottom, t, t);
 ddl_Arm_Bottom = subs(ddl_Arm_Bottom, syms_Replaced, syms_Replacing);
 

@@ -51,21 +51,26 @@ I_Hand = 1/12 * m_Hand * [
 r_Arm_Bottom = [0, 0+ length_Hand, 0, 1];
 r_Arm_G = [0, 0 + length_Hand/2, 0, 1];
 
-%% rotate beta around z
+r_Tauvec_Alpha = symfun([1, 0, 0, 1], t);
 r_Tauvec_Beta = symfun([0, 0, 1, 1], t);
-r_Trans_Matrix_Beta = [cos(r_Beta_Hand_Pre), -sin(r_Beta_Hand_Pre), 0, 0; sin(r_Beta_Hand_Pre), cos(r_Beta_Hand_Pre), 0, 0; 0, 0, 1, 0; 0, 0, 0, 1]';
-
-r_Arm_Bottom = r_Arm_Bottom * r_Trans_Matrix_Beta;
-r_Arm_G = r_Arm_G * r_Trans_Matrix_Beta;
 
 %% rotate alpha around x
-r_Tauvec_Alpha = symfun([1, 0, 0, 1], t);
 r_Trans_Matrix_Alpha = [1, 0, 0, 0; 0, cos(r_Alpha_Hand_Pre), -sin(r_Alpha_Hand_Pre), 0; 0, sin(r_Alpha_Hand_Pre), cos(r_Alpha_Hand_Pre), 0; 0, 0, 0, 1]';
 
 r_Arm_Bottom = r_Arm_Bottom * r_Trans_Matrix_Alpha;
 r_Arm_G = r_Arm_G * r_Trans_Matrix_Alpha;
 
-r_Tauvec_Beta = r_Tauvec_Beta * r_Trans_Matrix_Alpha;
+r_Tauvec_Alpha = r_Tauvec_Alpha * r_Trans_Matrix_Alpha;
+% r_Tauvec_Beta = r_Tauvec_Beta * r_Trans_Matrix_Alpha;
+
+%% rotate beta around z
+r_Trans_Matrix_Beta = [cos(r_Beta_Hand_Pre), -sin(r_Beta_Hand_Pre), 0, 0; sin(r_Beta_Hand_Pre), cos(r_Beta_Hand_Pre), 0, 0; 0, 0, 1, 0; 0, 0, 0, 1]';
+
+r_Arm_Bottom = r_Arm_Bottom * r_Trans_Matrix_Beta;
+r_Arm_G = r_Arm_G * r_Trans_Matrix_Beta;
+
+r_Tauvec_Alpha = r_Tauvec_Alpha * r_Trans_Matrix_Beta;
+r_Tauvec_Beta = r_Tauvec_Beta * r_Trans_Matrix_Beta;
 
 %% move origin
 r_Trans_Matrix_Origin = [1, 0, 0, r_X_Fixed; 0, 1, 0, r_Y_Fixed; 0, 0, 1, r_Z_Fixed; 0, 0, 0, 1]';
@@ -129,7 +134,7 @@ equations = [
 equations = subs(equations, syms_Replaced, syms_Replacing);
 
 %% Full forward dynamics
-%{
+%{/
 variables = [ddr_Alpha_Hand, ddr_Beta_Hand];
 
 [A, B] = equationsToMatrix(equations, variables);
@@ -176,7 +181,7 @@ job.Tasks
 %}
 
 %% Half forward dynamics
-%{/
+%{
 variables = [ddr_Alpha_Hand, r_Tau_Beta_Shoulder];
 
 [A, B] = equationsToMatrix(equations, variables);
@@ -283,7 +288,7 @@ job.Tasks
 %}
 
 %% Full Reverse Dynamics
-%{
+%{/
 ddr_Arm_Bottom = diff(r_Arm_Bottom, t, t);
 ddr_Arm_Bottom = subs(ddr_Arm_Bottom, syms_Replaced, syms_Replacing);
 

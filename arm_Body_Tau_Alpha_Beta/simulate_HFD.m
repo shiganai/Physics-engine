@@ -58,13 +58,13 @@ l_Z_Fixed = l_P_Fixed(3);
 %%
 
 time = 0:1e-2:50;
-velocity = 0;
+velocity = 2;
 q = [r_Alpha_Hand, velocity, r_Beta_Hand, 0, l_Alpha_Hand, velocity, l_Beta_Hand, 0, ...
     alpha_Body, velocity, beta_Body, 0, gamma_Body, 0, ...
     x_Head, 0, y_Head, 0, z_Head, 0]';
 
-r_Tau_Alpha_Shoulder = 0;
-l_Tau_Alpha_Shoulder = 0;
+r_Tau_Alpha_Shoulder = 10;
+l_Tau_Alpha_Shoulder = 10;
 l_Tau_Beta_Shoulder = 0;
 r_Tau_Beta_Shoulder = 0;
 
@@ -148,7 +148,7 @@ plot_Lim = 4 * [-1, 1];
 xlim(anime.axAnime, plot_Lim)
 ylim(anime.axAnime, plot_Lim)
 zlim(anime.axAnime, plot_Lim)
-view(anime.axAnime, [0,0,1])
+view(anime.axAnime, [1,0,0])
 
 dockfig(1)
 plot(time, [alpha_Body, beta_Body, gamma_Body])
