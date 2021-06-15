@@ -1,5 +1,6 @@
 
 clear all
+tic
 
 width_Body = 1;
 height_Body = 2;
@@ -9,18 +10,18 @@ m_Hand = 1;
 length_Hand = 1;
 g = 1;
 
-alpha_Body = deg2rad(180);
-beta_Body = deg2rad(0);
-gamma_Body = deg2rad(0);
+alpha_Body = deg2rad(10);
+beta_Body = deg2rad(10);
+gamma_Body = deg2rad(10);
 x_Head = 0;
 y_Head = -1;
 z_Head = 0;
 
-r_Alpha_Hand = deg2rad(180);
-r_Beta_Hand = deg2rad(0);
+r_Alpha_Hand = deg2rad(10);
+r_Beta_Hand = deg2rad(10);
 
-l_Alpha_Hand = deg2rad(180);
-l_Beta_Hand = deg2rad(0);
+l_Alpha_Hand = deg2rad(10);
+l_Beta_Hand = deg2rad(10);
 
 tau_Alpha_Body = 0;
 
@@ -57,8 +58,8 @@ l_Z_Fixed = l_P_Fixed(3);
 
 %%
 
-time = 0:1e-2:50;
-velocity = 0;
+time = 0:1e-2:2;
+velocity = 1;
 q = [r_Alpha_Hand, velocity, r_Beta_Hand, 0, l_Alpha_Hand, velocity, l_Beta_Hand, 0, ...
     alpha_Body, velocity, beta_Body, 0, gamma_Body, 0, ...
     x_Head, 0, y_Head, 0, z_Head, 0]';
@@ -68,7 +69,10 @@ l_Tau_Alpha_Shoulder = 0;
 l_Tau_Beta_Shoulder = 0;
 r_Tau_Beta_Shoulder = 0;
 
-[time_1, q_1] = ode45(@(t,q) ddt_FFD(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body, l_Tau_Alpha_Shoulder, r_Tau_Alpha_Shoulder, l_Tau_Beta_Shoulder, r_Tau_Beta_Shoulder), time, q);
+tic
+% [time_1, q_1] = ode45(@(t,q) ddt_FFD(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body, l_Tau_Alpha_Shoulder, r_Tau_Alpha_Shoulder, l_Tau_Beta_Shoulder, r_Tau_Beta_Shoulder), time, q);
+[time_1, q_1] = ode45(@(t,q) ddt_HFD(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body), time, q);
+toc
 
 r_Tau_Alpha_Shoulder = 0;
 l_Tau_Alpha_Shoulder = 0;
@@ -77,8 +81,10 @@ r_Tau_Beta_Shoulder = 0;
 
 time = time + time_1(end);
 
-[time_2, q_2] = ode45(@(t,q) ddt_FFD(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body, l_Tau_Alpha_Shoulder, r_Tau_Alpha_Shoulder, l_Tau_Beta_Shoulder, r_Tau_Beta_Shoulder), time, q_1(end,:));
-% [time_2, q_2] = ode45(@(t,q) ddt_HFD(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body, l_Tau_Alpha_Shoulder, r_Tau_Alpha_Shoulder), time, q_1(end,:));
+tic
+% [time_2, q_2] = ode45(@(t,q) ddt_FFD(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body, l_Tau_Alpha_Shoulder, r_Tau_Alpha_Shoulder, l_Tau_Beta_Shoulder, r_Tau_Beta_Shoulder), time, q_1(end,:));
+[time_2, q_2] = ode45(@(t,q) ddt_HFD(t,q,r_P_Fixed,l_P_Fixed, g, length_Hand, m_Hand, m_Body, width_Body, height_Body, depth_Body), time, q_1(end,:));
+toc
 
 time = [time_1(1:end-1); time_2];
 q = [q_1(1:end-1,:); q_2];

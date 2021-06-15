@@ -144,7 +144,7 @@ equations = [
 equations = subs(equations, syms_Replaced, syms_Replacing);
 
 %% Full forward dynamics
-%{/
+%{
 variables = [ddl_Alpha_Hand, ddl_Beta_Hand];
 
 [A, B] = equationsToMatrix(equations, variables);
@@ -188,8 +188,8 @@ job.Tasks
 %}
 
 %% Half forward dynamics
-%{
-variables = [ddl_Alpha_Hand, l_Tau_Beta_Shoulder];
+%{/
+variables = [ddl_Alpha_Hand, ddl_Beta_Hand];
 
 [A, B] = equationsToMatrix(equations, variables);
 toc
@@ -197,57 +197,25 @@ tic
 X = inv(A)*B;
 toc
 
-job = createJob(c);
-createTask(job, @matlabFunction, 1,{X(1), X(2), ...
-    'file', 'HFD_Dds_Arm_L.m', 'outputs', ...
-    {'ddl_Alpha_Hand', 'l_Tau_Beta_Shoulder'}});
-submit(job)
-job.Tasks
+% job = createJob(c);
+% createTask(job, @matlabFunction, 1,{X(1), X(2), ...
+%     'file', 'HFD_Dds_Arm_L.m', 'outputs', ...
+%     {'ddl_Alpha_Hand', 'l_Tau_Beta_Shoulder'}});
+% submit(job)
+% job.Tasks
 
-ddl_Arm_Bottom = diff(l_Arm_Bottom, t, t);
+
+ddl_Arm_Bottom = formula(diff(l_Arm_Bottom, t, t))';
 ddl_Arm_Bottom = subs(ddl_Arm_Bottom, syms_Replaced, syms_Replacing);
 ddl_Arm_Bottom = subs(ddl_Arm_Bottom, variables, X');
 
-target_Variables = [l_F_X, l_F_Y, l_F_Z, 1];
-coeffs_Ddl_Arm_Bottom = sym(zeros(3, size(target_Variables, 2)));
-
-[coeffs_Tmp, terms_Tmp] = coeffs(ddl_Arm_Bottom(1), target_Variables(1:end-1));
-if ~isequal(size(terms_Tmp), size(target_Variables))
-    for ii = 1:size(target_Variables, 2)
-        if any(terms_Tmp == target_Variables(ii))
-            coeffs_Ddl_Arm_Bottom(1, ii) = coeffs_Tmp(terms_Tmp == target_Variables(ii));
-        end
-    end
-else
-    coeffs_Ddl_Arm_Bottom(1, :) = coeffs_Tmp;
-end
-
-[coeffs_Tmp, terms_Tmp] = coeffs(ddl_Arm_Bottom(2), target_Variables(1:end-1));
-if ~isequal(size(terms_Tmp), size(target_Variables))
-    for ii = 1:size(target_Variables, 2)
-        if any(terms_Tmp == target_Variables(ii))
-            coeffs_Ddl_Arm_Bottom(2, ii) = coeffs_Tmp(terms_Tmp == target_Variables(ii));
-        end
-    end
-else
-    coeffs_Ddl_Arm_Bottom(2, :) = coeffs_Tmp;
-end
-
-[coeffs_Tmp, terms_Tmp] = coeffs(ddl_Arm_Bottom(3), target_Variables(1:end-1));
-if ~isequal(size(terms_Tmp), size(target_Variables))
-    for ii = 1:size(target_Variables, 2)
-        if any(terms_Tmp == target_Variables(ii))
-            coeffs_Ddl_Arm_Bottom(3, ii) = coeffs_Tmp(terms_Tmp == target_Variables(ii));
-        end
-    end
-else
-    coeffs_Ddl_Arm_Bottom(3, :) = coeffs_Tmp;
-end
+coeffs_Ddl_Arm_Bottom = coeffs_Vector(ddl_Arm_Bottom, [l_F_X, l_F_Y, l_F_Z, l_Tau_Alpha_Shoulder, l_Tau_Beta_Shoulder]);
 
 size(coeffs_Ddl_Arm_Bottom)
 
 coeffs_Ddl_Arm_Bottom_Force = coeffs_Ddl_Arm_Bottom(:, 1:3);
-coeffs_Ddl_Arm_Bottom_Constant = coeffs_Ddl_Arm_Bottom(:, 4);
+coeffs_Ddl_Arm_Bottom_Tau = coeffs_Ddl_Arm_Bottom(:, 4:5);
+coeffs_Ddl_Arm_Bottom_Constant = coeffs_Ddl_Arm_Bottom(:, 6);
 
 job = createJob(c);
 createTask(job, @matlabFunction, 1,{...
@@ -265,6 +233,20 @@ job.Tasks
 
 job = createJob(c);
 createTask(job, @matlabFunction, 1,{...
+    coeffs_Ddl_Arm_Bottom_Tau(1,1), coeffs_Ddl_Arm_Bottom_Tau(1,2), ...
+    coeffs_Ddl_Arm_Bottom_Tau(2,1), coeffs_Ddl_Arm_Bottom_Tau(2,2), ...
+    coeffs_Ddl_Arm_Bottom_Tau(3,1), coeffs_Ddl_Arm_Bottom_Tau(3,2), ...
+    'file', 'HFD_Coeffs_Ddl_Arm_Bottom_Tau.m', 'outputs', ...
+    {...
+    'A11','A12',...
+    'A21','A22',...
+    'A31','A32',...
+    }});
+submit(job)
+job.Tasks
+
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{...
     coeffs_Ddl_Arm_Bottom_Constant(1,1), ...
     coeffs_Ddl_Arm_Bottom_Constant(2,1), ...
     coeffs_Ddl_Arm_Bottom_Constant(3,1), ...
@@ -276,26 +258,10 @@ createTask(job, @matlabFunction, 1,{...
     }});
 submit(job)
 job.Tasks
-
-l_Tau_Beta_Shoulder = X(2);
-
-[coeffs_L_Tau_Beta_Shoulder, ~] = coeffs(l_Tau_Beta_Shoulder(1), [l_F_X, l_F_Y, l_F_Z]);
-
-coeffs_L_Tau_Beta_Shoulder_Force = coeffs_L_Tau_Beta_Shoulder(1:3);
-
-job = createJob(c);
-createTask(job, @matlabFunction, 1,{...
-    coeffs_L_Tau_Beta_Shoulder_Force(1,1), coeffs_L_Tau_Beta_Shoulder_Force(1,2), coeffs_L_Tau_Beta_Shoulder_Force(1,3), ...
-    'file', 'HFD_Coeffs_L_Tau_Beta_Shoulder_Force.m', 'outputs', ...
-    {...
-    'A11','A12','A13',...
-    }});
-submit(job)
-job.Tasks
 %}
 
 %% Full Reverse dynamics
-%{/
+%{
 ddl_Arm_Bottom = diff(l_Arm_Bottom, t, t);
 ddl_Arm_Bottom = subs(ddl_Arm_Bottom, syms_Replaced, syms_Replacing);
 
