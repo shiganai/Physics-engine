@@ -434,9 +434,16 @@ X = inv(A)*B;
 toc
 
 job = createJob(c);
-createTask(job, @matlabFunction, 1,{X(1), X(2), X(3), X(4), X(5), X(6), ...
+createTask(job, @matlabFunction, 1,{X(1), X(2), X(3), X(4), ...
     'file', 'HFD_Dds_Body.m', 'outputs', ...
-    {'ddalpha_Body', 'ddx_Head', 'ddy_Head', 'ddz_Head', 'r_Tau_Alpha_Shoulder', 'r_Tau_Beta_Shoulder'}});
+    {'ddalpha_Body', 'ddx_Head', 'ddy_Head', 'ddz_Head'}});
+submit(job)
+job.Tasks
+
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{X(5), X(6), ...
+    'file', 'HFD_Tau_Shouder.m', 'outputs', ...
+    {'r_Tau_Alpha_Shoulder', 'r_Tau_Beta_Shoulder'}});
 submit(job)
 job.Tasks
 
