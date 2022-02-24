@@ -3,7 +3,7 @@ syms m1 m2 real
 syms g real
 syms l1 l2 real
 
-% syms f1_X f1_Y real
+% you can set f2_X and f2_Y freely, such as spring
 syms f2_X f2_Y real
 syms tau2 real
 
@@ -41,8 +41,8 @@ syms_Replacing = [
 
 p1 = l1 * [cos(th1_Pre), sin(th1_Pre)];
 p2 = [x2_Pre, y2_Pre] + l2 * [cos(th2_Pre), sin(th2_Pre)];
-p1_G = 1/2 * [cos(th1_Pre), sin(th1_Pre)];
-p2_G = [x2_Pre, y2_Pre] + 1/2 * [cos(th2_Pre), sin(th2_Pre)];
+p1_G = 1/2 * l1 * [cos(th1_Pre), sin(th1_Pre)];
+p2_G = [x2_Pre, y2_Pre] + 1/2 * l2 * [cos(th2_Pre), sin(th2_Pre)];
 
 p1 = formula(p1);
 p2 = formula(p2);
